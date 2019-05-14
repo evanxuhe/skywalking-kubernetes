@@ -12,6 +12,8 @@
 | kubernetes |1.14.1|
 | skywalking |6.0.0-GA|
 | elasticsearch | 6.4.0 |
+
+
 本文写于**2019/05/14，
 skywalking用的是较新的6.0.0-GA，架构性能变化较5.0变化较大，有很大的参考意义；kubernetes为最新版
 elasticsearch使用6.4.0较稳定版本，与skywalking兼容性较好，亲测7.0有较大问题
