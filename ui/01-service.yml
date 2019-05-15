@@ -23,9 +23,9 @@ metadata:
     service: ui
 spec:
   ports:
-  - port: 80
+  - port: 8080
     name: page
-    targetPort: page
+    nodePort: 31234
   type: NodePort
   selector:
     app: ui
