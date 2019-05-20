@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
       - name: ui
-        image: apache/skywalking-ui
+        image: apache/skywalking-ui:6.0.0-GA
         ports:
         - containerPort: 8080
           name: page
