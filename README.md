@@ -23,6 +23,11 @@
     kubectl apply -f ui
     kubectl apply -f apm-springcloud-demo
 **注意修改elasticsearch/01-pv.yml中的路径为本地路径;节点名为本机hostname** 
+
+浏览器打开[http://127.0.0.1:31234/](http://127.0.0.1:31234/)查看服务详情
+
+如果部署了测试用例 访问[http://127.0.0.1:30082/item](http://127.0.0.1:30082/item) 会发现UI拓扑图多了两个服务 如下
+
 # 成果展示
 ```
 NAME                            READY   STATUS    RESTARTS   AGE
@@ -34,6 +39,9 @@ oap-6b56f8bbf5-7tldw            1/1     Running   0          118m
 oap-6b56f8bbf5-qzdx2            1/1     Running   0          118m
 ui-deployment-f4799496c-m5xw6   1/1     Running   0          117m
 ```
+![avatar](https://img-blog.csdnimg.cn/2019052320472034.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V2YW54dWhl,size_16,color_FFFFFF,t_70)
+![avatar](https://img-blog.csdnimg.cn/20190523204652721.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2V2YW54dWhl,size_16,color_FFFFFF,t_70)
+
 # 模块概述
 ### 模块概述
 |component  | descripiton |
@@ -47,9 +55,11 @@ ui-deployment-f4799496c-m5xw6   1/1     Running   0          117m
 ### 版本描述
 |component  | version |
 |--|--|
-| kubernetes |1.14.1|
+| kubernetes |1.14.2|
+| docker| 18.06 |
 | skywalking |6.1.0|
 | elasticsearch | 6.4.0 |
+
 
 ### 镜像
 |image  | version | descripiton |
@@ -110,5 +120,7 @@ k8s登录elasticsearch，查看hostname ip地址
     kubectl get pods -n kube-system
 解决方案详见[coredns服务一直处于 CrashLoopBackOff状态]( https://blog.csdn.net/evanxuhe/article/details/90210764)
 # 联系方式
+欢迎大家查看[我的博客](https://blog.csdn.net/evanxuhe/article/details/90211950)评论交流
+
 由于本人是k8s新人，难免存在很多问题，欢迎大家反馈
 我的邮箱 xuhe@chehejia.com
