@@ -17,12 +17,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oap-deployment
+  name: oap
   namespace: skywalking
-  labels:
-    app: oap
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: oap
@@ -30,11 +28,20 @@ spec:
     metadata:
       labels:
         app: oap
+        release: skywalking
     spec:
       serviceAccountName: skywalking-oap
+      initContainers:
+      - name: sidecar-init
+        image: evanxuhe/skywalking-agent-sidecar:6.1.0 # 容器镜像，包含静态资源文件
+        command: ["cp", "-r", "/data/agent", "/sidecar"]
+        volumeMounts:
+        - name: sidecar
+          mountPath: /sidecar
       containers:
       - name: oap
-        image: apache/skywalking-oap-server
+        image: evanxuhe/skywalking-oap-server:6.1.0
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 11800
           name: grpc
@@ -48,14 +55,35 @@ spec:
         env:
         - name: JAVA_OPTS
           value: -Xms256M -Xmx512M
-        - name: SKYWALKING_COLLECTOR_UID
+        #从volume载入配置 否则由于挂载config时 会与镜像内路径冲突 报错read only filesystem 
+        - name: SW_L0AD_CONFIG_FILE_FROM_VOLUME
+          value: "true"
+        # - name: SW_STORAGE
+        #   value: elasticsearch
+        # - name: SW_STORAGE_ES_CLUSTER_NODES
+        #   value: "192.168.78.136:9200"
+        # - name: SW_CLUSTER
+        #   value: kubernetes
+        # - name: SW_CLUSTER_K8S_NAMESPACE
+        #   value: skywalking
+        # - name: SW_SERVICE_MESH_OFFSET_MAX_FILE_SIZE
+        #   value: "200"
+        # - name: SW_RECEIVER_BUFFER_DATA_MAX_FILE_SIZE
+        #   value: "800"
+        # - name: SW_RECEIVER_BUFFER_FILE_CLEAN_WHEN_RESTART
+        #   value: "true"
+        - name: SKYWALKING_oap_UID
           valueFrom:
             fieldRef:
               fieldPath: metadata.uid
         volumeMounts:
+        - name: sidecar
+          mountPath: /sidecar
         - name: config
           mountPath: /skywalking/config
       volumes:
+      - name: sidecar
+        emptyDir: {}
       - name: config
         configMap:
           name: oap-config

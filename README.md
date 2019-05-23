@@ -1,37 +1,70 @@
 # skywalking-kubernetes
-轻松将skywalking 6.0部署进kubernetes(k8s) 
-完整ui oap es模块 可以基于k8s快速构建起一个完整本地skywalking本地测试开发环境
-## 适用范围
-我弄这个主要是为了本地测试k8s 搭建skywalking 学习了解之后逐步迁移到生产环境
-但是skywalking官方[apache/skywalking-kubernetes](https://github.com/apache/skywalking-kubernetes)的一些配置在apache孵化后过期，一些配置面向云环境，不适合本地测试
-该代码在本地开发机测试(ubuntu 18.04TLS)正常
-## 版本说明
-|component  | version |
-|--|--|
-| minikube | 1.0.1 |
-| kubernetes |1.14.1|
-| skywalking |6.0.0-GA|
-| elasticsearch | 6.4.0 |
+该项目可以迅速将skywalking 6.1.0部署进kubernetes(k8s) 
 
+包含ui oap es模块和完整的springcloud测试用例
 
-本文写于**2019/05/14，
-skywalking用的是较新的6.0.0-GA，架构性能变化较5.0变化较大，有很大的参考意义；kubernetes为最新版
-elasticsearch使用6.4.0较稳定版本，与skywalking兼容性较好，亲测7.0有较大问题
+此外将agent整合到sidecar中，也就是说每个pod中有两个应用 app+agent sidecar，更加适合于生产环境
+## 描述
+我弄这个主要是为了学习整合skywalking作为kubernetes线下环境的APM
+
+但是skywalking官方[apache/skywalking-kubernetes](https://github.com/apache/skywalking-kubernetes)的一些配置在apache孵化后过期
+没有最新的6.1.0版本 而6.1.0的性能提升比较大，此外也支持6.3.2 非常值得学习。
+此外一些配置面向云环境，不适合本地开发测试
 
 -------------
 # 安装使用
 **git地址**
 [evanxuhe/skywalking-kubernetes](https://github.com/evanxuhe/skywalking-kubernetes)
-
-clone下来，依次部署即可，非常简单方便
-**注意修改elasticsearch/01-pv.yml中的路径为本地路径**
+    cd 6.1.0
 
     kubectl apply -f namespace.yml
     kubectl apply -f elasticsearch
     kubectl apply -f oap
     kubectl apply -f ui
+    kubectl apply -f apm-springcloud-demo
+**注意修改elasticsearch/01-pv.yml中的路径为本地路径;节点名为本机hostname** 
+# 成果展示
+```
+NAME                            READY   STATUS    RESTARTS   AGE
+apm-eureka-799b8d5449-72npx     1/1     Running   0          99m
+apm-item-bdf545d9c-kjqxd        1/1     Running   0          94m
+elasticsearch-0                 1/1     Running   0          119m
+oap-6b56f8bbf5-7fjvb            1/1     Running   0          118m
+oap-6b56f8bbf5-7tldw            1/1     Running   0          118m
+oap-6b56f8bbf5-qzdx2            1/1     Running   0          118m
+ui-deployment-f4799496c-m5xw6   1/1     Running   0          117m
+```
+# 模块概述
+### 模块概述
+|component  | descripiton |
+|--|--|
+| namespace |创建skywalking命名空间|
+| elasticsearch |映射本地磁盘卷的es集群|
+| oap |collector 收集agent上传的数据并整合|
+| ui | RocketUI展示前端数据 |
+| apm-springcloud-demo | springcloud应用demo，eureka+item service 产生数据供展示(可选) |
+| busybox.yml | 装了很多调试工具，比如net-tools等，方便定位k8s内问题|
+### 版本描述
+|component  | version |
+|--|--|
+| kubernetes |1.14.1|
+| skywalking |6.1.0|
+| elasticsearch | 6.4.0 |
 
-应用全部挂在在skywalking namepace下，所以大家使用时不要忘记制定-n skywalking
+### 镜像
+|image  | version | descripiton |
+|--|--|--|
+| evanxuhe/skywalking-oap-server |6.1.0|修正时区为东八区|
+| evanxuhe/skywalking-agent-sidecar | 6.1.0 |sidecar 里面装载了agent文件夹|
+| apache/skywalking-ui|6.1.0|官方ui镜像|
+|elasticsearch-oss|6.3.2|官方es镜像|
+
+
+# 使用说明
+
+>应用全部挂在在skywalking namepace下，所以大家使用时不要忘记切换namespace 比如加-n skywalking
+
+> 此外之前遇到过很奇怪的问题 oap可以正常收集数据，ui没显示，并且请求oap报错IDs can't be null其实就是pod时间不对，导致查询范围不匹配
 查看kubectl get pods -n skywalking
 ## 配置修改
 es使用statefulset方式部署，oap，ui使用deployment部署
@@ -41,7 +74,7 @@ es使用statefulset方式部署，oap，ui使用deployment部署
 因而修改停止的正确做法是 
 
     kubectl edit statefulset elasticsearch -n skywalking
-    kubectl edit deployment oap-deployment -n skywalking
+    kubectl edit deployment oap -n skywalking
     kubectl edit deployment ui-deployment -n skywalking
 
 修改对应的replicates为0，拓展应用将replicates修改为对应副本数即可，想刷新配置也可以用这种办法
@@ -51,7 +84,7 @@ es使用statefulset方式部署，oap，ui使用deployment部署
 基于skywalking官方[apache/skywalking-kubernetes](https://github.com/apache/skywalking-kubernetes)
 修改为：
 
- - oap，ui镜像更新为最新 apache/skywalking-oap-server,apache/skywalking-ui镜像，解决原有镜像过期问题
+ - oap，ui镜像更新为最新 apache/skywalking-oap-server,apache/skywalking-ui镜像，解决原有镜像过期问题,修改时区为东八区
  - elasticsearch存储卷配置gce修改为local,增加01-pv.yaml 大家需要制定自己的本地路径
  - ui负载均衡从云环境loadbalace改为适用于本地的nodeport
 ---

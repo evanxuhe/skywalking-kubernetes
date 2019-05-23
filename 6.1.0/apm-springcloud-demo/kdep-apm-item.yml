@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apm-item
+  labels:
+    app: apm-item
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apm-item
+  template:
+    metadata:
+      name: apm-item
+      labels:
+        app: apm-item
+    spec:
+      initContainers:
+        - name: sidecar
+          image: evanxuhe/skywalking-agent-sidecar:6.1.0 # 容器镜像，包含静态资源文件
+          imagePullPolicy: IfNotPresent
+          command: ["cp", "-r", "/data/agent", "/sidecar"]
+          volumeMounts:
+            - name: sidecar
+              mountPath: /sidecar
+      containers:
+        - name: apm-item
+          image: evanxuhe/apm-item:6.1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JAVA_OPTS
+              value: -javaagent:/sidecar/agent/skywalking-agent.jar
+            - name: SW_AGENT_NAME
+              value: apm-item
+            - name: SW_AGENT_COLLECTOR_BACKEND_SERVICES
+              value: oap:11800
+            - name: EUREKA_HOSTNAME
+              value: apm-eureka
+            - name: EUREKA_PORT
+              value: '8761'
+          ports:
+            - name: http
+              containerPort: 8082
+          volumeMounts:
+            - name: sidecar
+              mountPath: /sidecar
+      volumes:
+        - name: sidecar  #共享agent文件夹
+          emptyDir: {}
+      restartPolicy: Always

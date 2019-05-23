@@ -27,5 +27,7 @@ spec:
     name: rest
   - port: 11800
     name: grpc
+  - port: 1234
+    name: page
   selector:
     app: oap

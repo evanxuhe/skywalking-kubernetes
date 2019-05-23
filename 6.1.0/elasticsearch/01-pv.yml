@@ -1,22 +1,25 @@
+# 在node xuhe-latop
+# 上创建一个本地磁盘local-pv 对应的本地路径为/data
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: local-pv
 spec:
   capacity:
-    storage: 300Gi
+    storage: 100Gi
   accessModes:
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   local:
     #修改这里为本地路径
-    path: /k8s-data
+    path: /data
   nodeAffinity:
     required:
       nodeSelectorTerms:
       - matchExpressions:
         - key: kubernetes.io/hostname
           operator: In
-          values:
-          - minikube
+          #这里修改为节点名，也就是你电脑的hostname
+          values: 
+          - xuhe-laptop
