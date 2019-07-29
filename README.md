@@ -8,7 +8,7 @@
 我弄这个主要是为了学习整合skywalking作为kubernetes线下环境的APM
 
 但是skywalking官方[apache/skywalking-kubernetes](https://github.com/apache/skywalking-kubernetes)的一些配置在apache孵化后过期
-没有最新的6.1.0版本 而6.1.0的性能提升比较大，此外也支持6.3.2 非常值得学习。
+没有最新的6.1.0版本 而6.1.0的性能提升比较大，此外也支持Elasticsearch6.3.2 非常值得学习。
 此外一些配置面向云环境，不适合本地开发测试
 
 -------------
@@ -69,7 +69,16 @@ ui-deployment-f4799496c-m5xw6   1/1     Running   0          117m
 | apache/skywalking-ui|6.1.0|官方ui镜像|
 |elasticsearch-oss|6.3.2|官方es镜像|
 
-
+# Ids can't be null
+问题的根源在于**时区不匹配** OAP为UTC UI为UTC+8 所以UI在对应的时间区间内查不到service导致报错
+解决办法
+在base镜像中 添加
+```bash
+# 时区修改为东八区
+RUN apk add --no-cache tzdata
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+```
 # 使用说明
 
 >应用全部挂在在skywalking namepace下，所以大家使用时不要忘记切换namespace 比如加-n skywalking
