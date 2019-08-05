@@ -1,3 +1,4 @@
+[![GitHub stars](https://img.shields.io/github/stars/evanxuhe/skywalking-kubernetes.svg?style=for-the-badge&label=Stars&logo=github)](https://github.com/evanxuhe/skywalking-kubernetes)
 # skywalking-kubernetes
 该项目可以迅速将skywalking 6.1.0部署进kubernetes(k8s) 
 
