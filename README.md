@@ -1,4 +1,9 @@
 [![GitHub stars](https://img.shields.io/github/stars/evanxuhe/skywalking-kubernetes.svg?style=for-the-badge&label=Stars&logo=github)](https://github.com/evanxuhe/skywalking-kubernetes)
+
+[![](https://images.microbadger.com/badges/image/evanxuhe/skywalking-oap-server.svg)](https://microbadger.com/images/evanxuhe/skywalking-oap-server "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/evanxuhe/skywalking-agent-sidecar:6.1.0.svg)](https://microbadger.com/images/evanxuhe/skywalking-agent-sidecar:6.1.0 "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/evanxuhe/apm-eureka.svg)](https://microbadger.com/images/evanxuhe/apm-eureka "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/version/evanxuhe/skywalking-agent-sidecar:6.1.0.svg)](https://microbadger.com/images/evanxuhe/skywalking-agent-sidecar:6.1.0 "Get your own version badge on microbadger.com")
 # skywalking-kubernetes
 该项目可以迅速将skywalking 6.1.0部署进kubernetes(k8s) 
 
