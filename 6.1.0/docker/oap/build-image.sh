@@ -1,2 +1,2 @@
-docker build -t reg.chehejia.com/chj-k8s-change/public/skywalking/oap:6.1.0 .
-docker push reg.chehejia.com/chj-k8s-change/public/skywalking/oap:6.1.0
+docker build -t 你的仓库/skywalking/base:6.1.0 .
+docker push 你的仓库/skywalking/base:6.1.0
