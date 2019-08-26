@@ -5,17 +5,20 @@
 [![](https://images.microbadger.com/badges/image/evanxuhe/apm-eureka.svg)](https://microbadger.com/images/evanxuhe/apm-eureka "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/evanxuhe/skywalking-agent-sidecar:6.1.0.svg)](https://microbadger.com/images/evanxuhe/skywalking-agent-sidecar:6.1.0 "Get your own version badge on microbadger.com")
 # skywalking-kubernetes
-该项目可以迅速将skywalking 6.1.0部署进kubernetes(k8s) 
+>该项目可以迅速将skywalking 6.1.0部署进kubernetes(k8s) 
 
-包含ui oap es模块和完整的springcloud测试用例
+>包含ui oap es模块和完整的springcloud测试用例  
+(包含所有Dockerfile和yaml文件)
 
-此外将agent整合到sidecar中，也就是说每个pod中有两个应用 app+agent sidecar，更加适合于生产环境
+>此外将agent整合到sidecar中，也就是说每个pod中有两个应用 app+agent sidecar，更加适合于生产环境
 ## 描述
-我弄这个主要是为了学习整合skywalking作为kubernetes线下环境的APM
+我弄这个主要是为了学习整合skywalking作为kubernetes线下环境的APM，供公司使用，但是实践过程中发现了原仓库存在的一些问题
 
-但是skywalking官方[apache/skywalking-kubernetes](https://github.com/apache/skywalking-kubernetes)的一些配置在apache孵化后过期
-没有最新的6.1.0版本 而6.1.0的性能提升比较大，此外也支持Elasticsearch6.3.2 非常值得学习。
-此外一些配置面向云环境，不适合本地开发测试
+- skywalking官方[apache/skywalking-kubernetes](https://github.com/apache/skywalking-kubernetes)的一些配置在apache孵化后过期
+- 之前没有最新的6.1.0版本 而6.1.0的性能提升比较大，此外也支持Elasticsearch6.3.2 非常值得学习。
+- 一些配置面向云环境，不适合本地开发测试
+>最后，欢迎大家支持skywalking项目 给[apache/skywalking](https://github.com/apache/skywalking)打星
+
 
 -------------
 # 安装使用
@@ -74,6 +77,16 @@ ui-deployment-f4799496c-m5xw6   1/1     Running   0          117m
 | evanxuhe/skywalking-agent-sidecar | 6.1.0 |sidecar 里面装载了agent文件夹|
 | apache/skywalking-ui|6.1.0|官方ui镜像|
 |elasticsearch-oss|6.3.2|官方es镜像|
+
+### 镜像Dockerfile
+docker文件目录下保存了所有镜像的Dockfile
+- 基于官方版本，默认时区从UTC修改为北京时间UTC8
+- 增加build-image.sh脚本，将其中的仓库地址替换成自己的dockerhub地址 可以方便上传
+[base docker文件](./6.1.0/docker/base/Dockerfile)
+[oap docker文件](./6.1.0/docker/oap/Dockerfile)
+[ui docker文件](./6.1.0/docker/ui/Dockerfile)
+>0826 官方[apache/skywalking-kubernetes](https://github.com/apache/skywalking-kubernetes)停止更新 
+> 对应的目前所有docker文件等保存在项目[apache/skywalking](https://github.com/apache/skywalking)docker目录下
 
 # Ids can't be null
 问题的根源在于**时区不匹配** OAP为UTC UI为UTC+8 所以UI在对应的时间区间内查不到service导致报错
@@ -138,4 +151,4 @@ k8s登录elasticsearch，查看hostname ip地址
 欢迎大家查看[我的博客](https://blog.csdn.net/evanxuhe/article/details/90211950)评论交流
 
 由于本人是k8s新人，难免存在很多问题，欢迎大家反馈
-我的邮箱 xuhe@chehejia.com
+我的邮箱 evanxuhe@163.com
